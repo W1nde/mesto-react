@@ -71,13 +71,17 @@ class Api {
     }).then(this._handleResponse)
   }
 
-  like = (_id, methodType) => {
+  like = (_id, isLiked) => {
     return fetch(`https://mesto.nomoreparties.co/v1/cohort-35/cards/${_id}/likes`, {
-      method: methodType,
+      method: isLiked ? 'PUT' : 'DELETE',
       headers: {
         authorization: this._token
       }
     }).then(this._handleResponse)
+  }
+
+  getInitialData() {
+    return Promise.all([this.getUser(), this.getCards()]);
   }
 }
 
