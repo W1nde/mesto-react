@@ -1,36 +1,17 @@
-import React, {useState} from 'react';
-import api from '../utils/Api';
+import React from 'react';
 import Card from './Card';
+import { CurrentUserContext } from '../contexts/CurrentUserContext'
 
-function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick}) {
-
-  const [userName, setUserName] = useState('');
-  const [userAbout, setUserAbout] = useState('');
-  const [userAvatar, setUserAvatar] = useState('');
-
-  const [cards, setCards] = useState([]);
-
-  React.useEffect(() => {
-    api.getUserInfo()
-    .then((userData) => {
-      setUserName(userData.name);
-      setUserAbout(userData.about);
-      setUserAvatar(userData.avatar);
-    })
-    .catch(err => `Не удалось получить данные пользователя, ошибка: ${err}`)
-
-    api.getCards()
-    .then((cardsList) => {
-      setCards(cardsList);
-    })
-    .catch(err => `Не удалось получить данные карточек, ошибка: ${err}`)
-  }, [])
+function Main({cards, onEditProfile, onEditAvatar, onAddPlace, onConfirmDeleteClick, onCardClick, onCardLike, onCardDelete}) {
+  
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <main className="main">
       <section className="profile">
 
-        <div onClick={onEditAvatar} 
+        <div 
+          onClick={onEditAvatar} 
           className="profile__avatar"
           style={{ backgroundImage: `url(${userAvatar})` }}>
         </div>
@@ -43,8 +24,6 @@ function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick}) {
           <p className="profile__job">{userAbout}</p>
         </div>
 
-
-
         <button type="button" onClick={onAddPlace} className="profile__add-button"></button>
       </section>
 
@@ -54,6 +33,9 @@ function Main({onEditProfile, onEditAvatar, onAddPlace, onCardClick}) {
             card={cardData}
             key={cardData._id}
             onCardClick={onCardClick}
+            onLikeCard={onLikeCard}
+            onDeleteCard={onDeleteCard}
+            onCardDeleteHandler={onCardDeleteHandler}
           />
         ))}
       </section>
