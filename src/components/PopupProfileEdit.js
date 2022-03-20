@@ -19,7 +19,7 @@ function PopupProfileEdit(props) {
     evt.preventDefault();
     
     props.onUpdateUser({
-      name,
+      name: name,
       about: description
     });
     props.isClose();
@@ -29,7 +29,7 @@ function PopupProfileEdit(props) {
     if (currentUser) {
     setName(currentUser.name);
     setDescription(currentUser.about);
-    }
+  }
   }, [currentUser, props.isOpen]);
 
   return (
@@ -64,7 +64,7 @@ function PopupProfileEdit(props) {
         value={description || ''}
         placeholder="О себе"
         size="40"
-        className="popup__input popup__input_type_profession"
+        className="popup__input popup__input_type_job"
         minLength="2"
         maxLength="200"
         onChange={descriptionChangeHandler}
@@ -72,7 +72,7 @@ function PopupProfileEdit(props) {
       />
         
       <span id="job-input-error" className="popup__input-error"></span>
-      <button type="submit" className="popup__submit-button">Сохранить</button>
+      <button type="submit" className="popup__save">Сохранить</button>
     </PopupWithForm>
   )
 }

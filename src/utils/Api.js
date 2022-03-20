@@ -43,7 +43,7 @@ class Api {
         'Content-type': 'application/json'
       },
       body: JSON.stringify({
-        name,
+        name: name,
         about: about
       })
     }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))

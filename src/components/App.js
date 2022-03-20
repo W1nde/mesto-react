@@ -19,23 +19,23 @@ function App() {
   const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
 
   const [selectedCard, setSelectedCard] = useState(null);
-  const [cardToDelete, setCardToDelete] = useState()
-  const [currentUser, setCurrentUser] = useState(null);
+  const [cardToDelete, setCardToDelete] = useState();
+  const [currentUser, setCurrentUser] = useState({});
 
   function popupProfileClickHandler() {
-    setIsPopupProfileOpen(true)
+    setIsPopupProfileOpen(true);
   }
 
   function popupPlaceClickHandler() {
-    setIsPopupPlaceOpen(true)
+    setIsPopupPlaceOpen(true);
   }
 
   function popupAvatarClickHandler() {
-    setIsPopupAvatarOpen(true)
+    setIsPopupAvatarOpen(true);
   }
 
   function popupDeleteClickHandler(cardData) {
-    setIsPopupDeleteOpen(true)
+    setIsPopupDeleteOpen(true);
     setCardToDelete(cardData);
   }
 
@@ -43,7 +43,7 @@ function App() {
     setIsPopupProfileOpen(false);
     setIsPopupPlaceOpen(false);
     setIsPopupAvatarOpen(false);
-    setIsPopupDeleteOpen(false)
+    setIsPopupDeleteOpen(false);
 
     setSelectedCard(null);
   }
@@ -53,99 +53,116 @@ function App() {
   }
 
   function updateUserHandler(currentUser) {
-    api.updateUserInfo({name: currentUser.name, job: currentUser.about})
+    api
+      .updateUserInfo({ name: currentUser.name, job: currentUser.about })
       .then((userData) => {
         setCurrentUser(userData);
       })
-      .catch(err => `Не удалось обновить данные пользователя, ошибка: ${err}`)
+      .catch(
+        (err) => `Не удалось обновить данные пользователя, ошибка: ${err}`
+      );
   }
 
-  function updateAvatarHandler({avatar}) {
-    api.updateAvatarInfo({avatar})
+  function updateAvatarHandler({ avatar }) {
+    api
+      .updateAvatarInfo({ avatar })
       .then((userData) => {
-        setCurrentUser(userData)
+        setCurrentUser(userData);
       })
-      .catch(err => `Не удалось обновить аватар, ошибка: ${err}`)
+      .catch((err) => `Не удалось обновить аватар, ошибка: ${err}`);
   }
 
   function likeHandler(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
-    
-    api.like(card._id, !isLiked)
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+
+    api
+      .like(card._id, !isLiked)
       .then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
       })
-      .catch(err => `Не удалось обновить лайк, ошибка: ${err}`)
+      .catch((err) => `Не удалось обновить лайк, ошибка: ${err}`);
   }
 
   function cardDeleteHandler(card) {
-    api.deleteCard(card._id)
+    api
+      .deleteCard(card._id)
       .then(() => {
-        setCards((state) => state.filter((c) => {
-          return c._id !== card._id;
-        }))
+        setCards((state) =>
+          state.filter((c) => {
+            return c._id !== card._id;
+          })
+        );
       })
-      .catch(err => `Не удалось удалить карточку, ошибка: ${err}`)
+      .catch((err) => `Не удалось удалить карточку, ошибка: ${err}`);
   }
 
-  function createCardHandler({name, link}) {
-    api.addCard({name, link})
+  function createCardHandler({ name, link }) {
+    api
+      .addCard({ name, link })
       .then((newCard) => {
         setCards([newCard, ...cards]);
       })
-      .catch(err => `Не удалось создать карточку, ошибка: ${err}`)
+      .catch((err) => `Не удалось создать карточку, ошибка: ${err}`);
   }
+  React.useEffect(() => {
+    Promise.all([api.getCards(), api.getUserInfo()])
 
+      .then(([cards, userData]) => {
+        setCurrentUser(userData);
+        setCards(cards);
+      })
+      .catch((err) => `Данные пользователя не получены : ${err}`);
+  }, []);
   return (
     <CurrentUserContext.Provider value={currentUser}>
-    <div className="page">
-      <div className="page__container">
+      <div className="page">
+        <div className="page__container">
+          <Header />
 
-        <Header/>
+          <Main
+            onEditProfile={popupProfileClickHandler}
+            onEditAvatar={popupAvatarClickHandler}
+            onAddPlace={popupPlaceClickHandler}
+            onLikeCard={likeHandler}
+            onCardClick={cardClickHandler}
+            onDeleteCard={popupDeleteClickHandler}
+            onCardDeleteHandler={cardDeleteHandler}
+            cards={cards}
+          />
 
-        <Main
-          onEditProfile={popupProfileClickHandler}
-          onEditAvatar={popupAvatarClickHandler}
-          onAddPlace={popupPlaceClickHandler}
-          onLikeCard={likeHandler}
-          onCardClick={cardClickHandler}
-          onDeleteCard={popupDeleteClickHandler}
-          onCardDeleteHandler={cardDeleteHandler}
-          cards={cards}
+          <Footer />
+        </div>
+
+        <PopupAddPlace
+          isOpen={isPopupAddOpen}
+          isClose={closePopups}
+          onCreateCard={createCardHandler}
         />
 
-        <Footer/>
+        <PopupProfileEdit
+          isOpen={isPopupProfileOpen}
+          isClose={closePopups}
+          onUpdateUser={updateUserHandler}
+        />
 
+        <PopupAvatarEdit
+          isOpen={isPopupAvatarOpen}
+          isClose={closePopups}
+          onUpdateUser={updateAvatarHandler}
+        />
+
+        <PopupDelete
+          isOpen={isPopupDeleteOpen}
+          isClose={closePopups}
+          onCardDelete={() => cardDeleteHandler(cardToDelete)}
+        />
+
+        <ImagePopup card={selectedCard} onClose={closePopups} />
       </div>
-
-      <PopupAddPlace 
-        isOpen={isPopupAddOpen}
-        isClose={closePopups}
-        onCreateCard={createCardHandler}
-      />
-
-      <PopupProfileEdit 
-        isOpen={isPopupProfileOpen}
-        isClose={closePopups}
-        onUpdateUser={updateUserHandler}
-      />
-
-      <PopupAvatarEdit 
-        isOpen={isPopupAvatarOpen}
-        isClose={closePopups}
-        onUpdateUser={updateAvatarHandler}
-      />
-
-      <PopupDelete 
-        isOpen={isPopupDeleteOpen}
-        isClose={closePopups}
-        onCardDelete={() => cardDeleteHandler(cardToDelete)}
-      />
-
-      <ImagePopup card={selectedCard} onClose={closePopups} />
-    </div>
     </CurrentUserContext.Provider>
   );
 }
 
-export default App
+export default App;
