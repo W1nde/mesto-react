@@ -5,14 +5,14 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 function PopupProfileEdit(props) {
   const currentUser = useContext(CurrentUserContext);
   const [name, setName] = useState(currentUser?.name);
-  const [description, setDescription] = useState(currentUser?.about);
+  const [about, setAbout] = useState(currentUser?.about);
   
   const nameChangeHandler = (evt) => {
     setName(evt.target.value);
   }
   
-  const descriptionChangeHandler = (evt) => {
-    setDescription(evt.target.value);
+  const aboutChangeHandler = (evt) => {
+    setAbout(evt.target.value);
   }
 
   const submitHandler = (evt) => {
@@ -20,7 +20,7 @@ function PopupProfileEdit(props) {
     
     props.onUpdateUser({
       name: name,
-      about: description
+      about: about
     });
     props.isClose();
   }
@@ -28,7 +28,7 @@ function PopupProfileEdit(props) {
   useEffect(() => {
     if (currentUser) {
     setName(currentUser.name);
-    setDescription(currentUser.about);
+    setAbout(currentUser.about);
   }
   }, [currentUser, props.isOpen]);
 
@@ -61,13 +61,13 @@ function PopupProfileEdit(props) {
         id="job-input"
         type="text"
         name="job"
-        value={description || ''}
+        value={about|| ''}
         placeholder="О себе"
         size="40"
         className="popup__input popup__input_type_job"
         minLength="2"
         maxLength="200"
-        onChange={descriptionChangeHandler}
+        onChange={aboutChangeHandler}
         required
       />
         
