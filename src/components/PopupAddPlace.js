@@ -9,12 +9,10 @@ const [placeError, setNameError] = useState('');
 const [imageError, setLinkError] = useState('');
 
 function placeChangeHandler(evt) {
-  setNameError(evt.target.validationMessage);
   setName(evt.target.value);
 }
 
 function imageChangeHandler(evt) {
-  setLinkError(evt.target.validationMessage);
   setLink(evt.target.value);
 }
 
