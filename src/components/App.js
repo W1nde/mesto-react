@@ -54,7 +54,7 @@ function App() {
 
   function updateUserHandler(currentUser) {
     api
-      .updateUserInfo({ name: currentUser.name, job: currentUser.about })
+      .updateUserInfo({ name: currentUser.name, about: currentUser.about })
       .then((userData) => {
         setCurrentUser(userData);
       })
@@ -64,12 +64,11 @@ function App() {
   }
 
   function updateAvatarHandler({ avatar }) {
-    api
-      .updateAvatarInfo({ avatar })
+    api.updateAvatarInfo({avatar})
       .then((userData) => {
-        setCurrentUser(userData);
+        setCurrentUser(userData)
       })
-      .catch((err) => `Не удалось обновить аватар, ошибка: ${err}`);
+      .catch(err => `Не удалось обновить аватар, ошибка: ${err}`)
   }
 
   function likeHandler(card) {
@@ -125,7 +124,7 @@ function App() {
             onEditProfile={popupProfileClickHandler}
             onEditAvatar={popupAvatarClickHandler}
             onAddPlace={popupPlaceClickHandler}
-            onLikeCard={likeHandler}
+            onCardLike={likeHandler}
             onCardClick={cardClickHandler}
             onDeleteCard={popupDeleteClickHandler}
             onCardDeleteHandler={cardDeleteHandler}
@@ -150,7 +149,7 @@ function App() {
         <PopupAvatarEdit
           isOpen={isPopupAvatarOpen}
           isClose={closePopups}
-          onUpdateUser={updateAvatarHandler}
+          onUpdateAvatar={updateAvatarHandler}
         />
 
         <PopupDelete

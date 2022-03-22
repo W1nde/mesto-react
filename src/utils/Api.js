@@ -49,16 +49,14 @@ class Api {
     }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
   }
 
-  updateAvatarInfo = (avatar) => {
-    return fetch('https://mesto.nomoreparties.co/v1/cohort-35/users/me/avatar', {
+  updateAvatarInfo(avatar) {
+    return fetch(`${this._adress}/users/me/avatar`, {
       method: 'PATCH',
       headers: {
         authorization: this._token,
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
-        avatar: avatar,
-      })
+      body: JSON.stringify(avatar)
     }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
   }
   
@@ -68,7 +66,7 @@ class Api {
       headers: {
         authorization: this._token
       }
-    }).then(this._handleResponse)
+    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
   }
 
   like = (_id, isLiked) => {
@@ -77,7 +75,7 @@ class Api {
       headers: {
         authorization: this._token
       }
-    }).then(this._handleResponse)
+    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
   }
 
   getInitialData() {
