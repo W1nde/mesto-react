@@ -126,7 +126,7 @@ function App() {
             onCardLike={handleLike}
             onCardClick={handleCardClick}
             onСardDelete={handleCardDelete}
-            onCardDeleteHandler={handlePopupDeleteClick}
+            onConfirmCardDelete={handlePopupDeleteClick}
             cards={cards}
           />
 

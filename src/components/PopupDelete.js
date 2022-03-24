@@ -5,7 +5,7 @@ function PopupDelete(props) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.isClose();
+    props.onClose();
     props.onCardDelete();    
   }
 
@@ -17,11 +17,6 @@ function PopupDelete(props) {
       onClose={props.onClose} 
       onSubmit={handleSubmit}
     >
-
-      <button type="submit" className="popup__save">
-        Да
-      </button>
-
     </PopupWithForm>
   )
 }
