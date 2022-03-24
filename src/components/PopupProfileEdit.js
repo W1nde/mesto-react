@@ -7,15 +7,15 @@ function PopupProfileEdit(props) {
   const [name, setName] = useState(currentUser?.name);
   const [about, setAbout] = useState(currentUser?.about);
   
-  const nameChangeHandler = (evt) => {
+  const handleNameChange = (evt) => {
     setName(evt.target.value);
   }
   
-  const aboutChangeHandler = (evt) => {
+  const handleAboutChange = (evt) => {
     setAbout(evt.target.value);
   }
 
-  const submitHandler = (evt) => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     
     props.onUpdateUser({
@@ -37,8 +37,8 @@ function PopupProfileEdit(props) {
       title="Редактировать профиль"
       name="edit"
       isOpen={props.isOpen}
-      onClose={props.isClose}
-      onSubmit={submitHandler}
+      onClose={props.onClose}
+      onSubmit={handleSubmit}
       >
 
       <input
@@ -51,7 +51,7 @@ function PopupProfileEdit(props) {
         className="popup__input popup__input_type_name"
         minLength="2"
         maxLength="40"
-        onChange={nameChangeHandler}
+        onChange={handleNameChange}
         required
       />
 
@@ -67,12 +67,11 @@ function PopupProfileEdit(props) {
         className="popup__input popup__input_type_job"
         minLength="2"
         maxLength="200"
-        onChange={aboutChangeHandler}
+        onChange={handleAboutChange}
         required
       />
         
       <span id="job-input-error" className="popup__input-error"></span>
-      <button type="submit" className="popup__save">Сохранить</button>
     </PopupWithForm>
   )
 }

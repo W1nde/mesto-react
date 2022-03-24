@@ -7,10 +7,10 @@ function Main({
   onEditProfile,
   onEditAvatar,
   onAddPlace,
-  onConfirmDeleteClick,
   onCardClick,
   onCardLike,
   onCardDelete,
+  onCardDeleteHandler,
 }) {
   const currentUser = React.useContext(CurrentUserContext);
 
@@ -50,7 +50,7 @@ function Main({
             onCardClick={onCardClick}
             onCardLike={onCardLike}
             onCardDelete={onCardDelete}
-            onConfirmDeleteClick={onConfirmDeleteClick}
+            onCardDeleteHandler={onCardDeleteHandler}
           />
         ))}
       </section>

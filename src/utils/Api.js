@@ -5,12 +5,16 @@ class Api {
     this._token = token;
   }
 
+  _getResponse(res) {
+    return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
+  }
+
   getCards() {
     return fetch(`${this._adress}/cards`, {
       headers: {
         authorization: this._token
       }
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
   addCard({name, link}) {
@@ -24,7 +28,7 @@ class Api {
         name: name,
         link: link
       })
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
   getUserInfo() {
@@ -32,11 +36,11 @@ class Api {
       headers: {
         authorization: this._token
       }
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
   updateUserInfo = ({name, about}) => {
-    return fetch('https://mesto.nomoreparties.co/v1/cohort-35/users/me', {
+    return fetch(`${this._adress}/users/me`, {
       method: 'PATCH',
       headers: {
         authorization: this._token,
@@ -46,7 +50,7 @@ class Api {
         name: name,
         about: about
       })
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
   updateAvatarInfo(avatar) {
@@ -57,29 +61,29 @@ class Api {
         'Content-type': 'application/json'
       },
       body: JSON.stringify(avatar)
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
   
   deleteCard(_id) {
-    return fetch(`https://mesto.nomoreparties.co/v1/cohort-35/cards/${_id}`, {
+    return fetch(`${this._adress}/cards/${_id}`, {
       method: 'DELETE',
       headers: {
         authorization: this._token
       }
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
-  like = (_id, isLiked) => {
-    return fetch(`https://mesto.nomoreparties.co/v1/cohort-35/cards/${_id}/likes`, {
+  like(id, isLiked) {
+    return fetch(`${this._adress}/cards/${id}/likes`, {
       method: isLiked ? 'PUT' : 'DELETE',
       headers: {
         authorization: this._token
       }
-    }).then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+    }).then(this._getResponse)
   }
 
   getInitialData() {
-    return Promise.all([this.getUser(), this.getCards()]);
+    return Promise.all([this.getUserInfo(), this.getCards()]);
   }
 }
 

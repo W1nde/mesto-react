@@ -4,7 +4,7 @@ import PopupWithForm from "./PopupWithForm";
 function PopupAvatarEdit (props) {
   const avatarInputRef = useRef();
 
-  function submitHandler(evt) {
+  function handleSubmit(evt) {
     evt.preventDefault();
     
     props.onUpdateAvatar({
@@ -23,8 +23,8 @@ function PopupAvatarEdit (props) {
         title="Обновить аватар"
         name="avatar-update"
         isOpen={props.isOpen}
-        onClose={props.isClose}
-        onSubmit={submitHandler}
+        onClose={props.onClose}
+        onSubmit={handleSubmit}
     >
 
     <input
@@ -39,7 +39,6 @@ function PopupAvatarEdit (props) {
     />
 
     <span id="avatar-input-error" name="popup__span error"></span>
-    <button type="submit" className="popup__save">Сохранить</button>
 
   </PopupWithForm>
   )

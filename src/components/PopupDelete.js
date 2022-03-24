@@ -3,7 +3,7 @@ import PopupWithForm from "./PopupWithForm";
 
 function PopupDelete(props) {
 
-  function submitHandler(evt) {
+  function handleSubmit(evt) {
     evt.preventDefault();
     props.isClose();
     props.onCardDelete();    
@@ -14,8 +14,8 @@ function PopupDelete(props) {
       title="Вы уверены?" 
       name="pic-delete"
       isOpen={props.isOpen}
-      onClose={props.isClose}
-      onSubmit={submitHandler}
+      onClose={props.onClose} 
+      onSubmit={handleSubmit}
     >
 
       <button type="submit" className="popup__save">

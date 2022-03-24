@@ -2,9 +2,7 @@ import React from 'react';
 
 function ImagePopup(props) {
   return (
-    <div className={props.card 
-        ? "popup popup_type_pic popup_opened" 
-        : "popup popup_type_pic"}>
+    <div className={`popup popup_type_pic ${props.card && 'popup_opened'}`}>
     <div className="popup__overlay"></div>
     <div className="popup__pic-container">
       <img src={props.card?.link} alt={`Изображение ${props.card?.name}`} className="popup__pic" />

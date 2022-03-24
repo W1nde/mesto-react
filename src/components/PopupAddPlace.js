@@ -5,18 +5,18 @@ function PopupAddPlace(props) {
 const [name, setName] = useState('');
 const [link, setLink] = useState('');
 
-const [placeError, setNameError] = useState('');
-const [imageError, setLinkError] = useState('');
+// const [placeError, setNameError] = useState('');
+// const [imageError, setLinkError] = useState('');
 
-function placeChangeHandler(evt) {
+function handlePlaceChange(evt) {
   setName(evt.target.value);
 }
 
-function imageChangeHandler(evt) {
+function handleImageChange(evt) {
   setLink(evt.target.value);
 }
 
-function addPlaceSubmitHandler(evt) {
+function handleAddPlaceSubmit(evt) {
   evt.preventDefault();
 
   props.onCreateCard({
@@ -28,28 +28,21 @@ function addPlaceSubmitHandler(evt) {
   props.isClose();
 }
 
-function isDisabled() {
-  if (name === '' || link === '' || placeError !== '' || imageError !== '')  {
-    return true
-  } else {
-    return false
-  }
-}
-
-React.useEffect(() => {
+/* React.useEffect(() => {
   setName('');
   setLink('');
   setNameError('');
   setLinkError('');
 }, [props.isOpen]);
+*/
 
   return (
     <PopupWithForm
         title="Новое место"
         name="add"
         isOpen={props.isOpen}
-        onClose={props.isClose}
-        onSubmit={addPlaceSubmitHandler}
+        onClose={props.onClose}
+        onSubmit={handleAddPlaceSubmit}
     >
 
         <input
@@ -62,7 +55,7 @@ React.useEffect(() => {
         minLength="2"
         maxLength="30"
         value={name}
-        onChange={placeChangeHandler}
+        onChange={handlePlaceChange}
         required
         />
     
@@ -76,17 +69,11 @@ React.useEffect(() => {
         size="40"
         className="popup__input popup__input_type_url"
         value={link}
-        onChange={imageChangeHandler}
+        onChange={handleImageChange}
         required
         />
 
         <span id="url-error" className="popup__span error"></span>
-
-        <button type="submit" className={isDisabled() 
-            ? "popup__save popup__save_disabled"
-            : "popup__save"}>
-            Создать
-        </button>
 
     </PopupWithForm>
   )
