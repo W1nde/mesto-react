@@ -5,9 +5,6 @@ function PopupAddPlace(props) {
 const [name, setName] = useState('');
 const [link, setLink] = useState('');
 
-// const [placeError, setNameError] = useState('');
-// const [imageError, setLinkError] = useState('');
-
 function handlePlaceChange(evt) {
   setName(evt.target.value);
 }
@@ -25,16 +22,8 @@ function handleAddPlaceSubmit(evt) {
   });
   setName('');
   setLink('');
-  props.isClose();
+  props.onClose();
 }
-
-/* React.useEffect(() => {
-  setName('');
-  setLink('');
-  setNameError('');
-  setLinkError('');
-}, [props.isOpen]);
-*/
 
   return (
     <PopupWithForm

@@ -11,7 +11,7 @@ function PopupAvatarEdit (props) {
       avatar: avatarInputRef.current.value
     })
 
-    props.isClose();
+    props.onClose();
   }
 
   React.useEffect(() => {
@@ -38,7 +38,7 @@ function PopupAvatarEdit (props) {
       required
     />
 
-    <span id="avatar-input-error" name="popup__span error"></span>
+    <span id="avatar-input-error" className="popup__span error"></span>
 
   </PopupWithForm>
   )

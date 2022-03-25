@@ -4,7 +4,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function PopupProfileEdit(props) {
   const currentUser = useContext(CurrentUserContext);
-  const [name, setName] = useState(currentUser?.name);
+  const [name, setName] = useState(currentUser?.name ?? '');
   const [about, setAbout] = useState(currentUser?.about);
   
   const handleNameChange = (evt) => {
@@ -22,7 +22,7 @@ function PopupProfileEdit(props) {
       name: name,
       about: about
     });
-    props.isClose();
+    props.onClose();
   }
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function PopupProfileEdit(props) {
         required
       />
 
-      <span id="name-input-error" className="popup__input-error"></span>
+      <span id="name-input-error" className="popup__span error"></span>
 
       <input
         id="job-input"
@@ -71,7 +71,7 @@ function PopupProfileEdit(props) {
         required
       />
         
-      <span id="job-input-error" className="popup__input-error"></span>
+      <span id="job-input-error" className="popup__span error"></span>
     </PopupWithForm>
   )
 }
