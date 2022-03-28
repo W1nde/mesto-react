@@ -113,11 +113,40 @@ function App() {
       })
       .catch((err) => `Данные пользователя не получены : ${err}`);
   }, []);
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <div className="page__container">
+      <div className='page'>
+        <div className='page__container'>
           <Header />
+
+          <Switch>
+
+            <ProtectedRoute
+
+            />
+
+            <Route path='sign-up'>
+              <Register 
+                name='register'
+              />
+            </Route>
+
+            <Route path='sign-in'>
+              <Login
+                name='login'
+              />
+            </Route>
+
+
+
+          </Switch>
+
+
+
+
+
+
 
           <Main
             onEditProfile={handlePopupProfileClick}
