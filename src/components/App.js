@@ -1,14 +1,23 @@
-import React, { useState } from "react";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import ImagePopup from "./ImagePopup";
-import api from "../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import PopupAddPlace from "./PopupAddPlace";
-import PopupDelete from "./PopupDelete";
-import PopupProfileEdit from "./PopupProfileEdit";
-import PopupAvatarEdit from "./PopupAvatarEdit";
+import React, { useState } from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import {Redirect, Route, Switch, useHistory} from 'react-router-dom';
+
+import ProtectedRoute from './ProtectedRoute';
+
+import Register from './Register'
+import Login from './Login'
+
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import ImagePopup from './ImagePopup';
+import PopupAddPlace from './PopupAddPlace';
+import PopupDelete from './PopupDelete';
+import PopupProfileEdit from './PopupProfileEdit';
+import PopupAvatarEdit from './PopupAvatarEdit';
+
+import api from '../utils/api';
+import * as auth from '../utils/auth.js';
 
 function App() {
   const [cards, setCards] = useState([]);
@@ -20,6 +29,16 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardToDelete, setCardToDelete] = useState('');
   const [currentUser, setCurrentUser] = useState({});
+
+  const [loggedIn, setLoggedIn] = React.useState(false)
+
+  const [userData, setUserData] = React.useState(null);
+
+  const [load, setLoad] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingLoader, setIsLoadingLoader] = React.useState(false);
+
+  const [authState, setAuthState] = React.useState(false);
 
   function handlePopupProfileClick() {
     setIsPopupProfileOpen(true);
@@ -104,6 +123,28 @@ function App() {
       })
       .catch((err) => `Не удалось создать карточку, ошибка: ${err}`);
   }
+
+  function handleSignOut() {
+    return auth.signOut()
+      .then(() => {
+        setLoad(false);
+        setLoggedIn(false);
+        useHistory.push('/sign-in');
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+
+
+
+
+
+
+
+
+
   React.useEffect(() => {
     api.getInitialData()
 
@@ -118,27 +159,27 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className='page'>
         <div className='page__container'>
-          <Header />
+          <Header
+            loggedIn={loggedIn}
+            userData={userData}
+            onSignOut={handleSignOut}
+            authState={authState}
+            load={load}
+          />
 
           <Switch>
-
             <ProtectedRoute
-
+              exact patch='/'
+              loggedIn={loggedIn}
+              component={Main}
+              onEditProfile={handlePopupProfileClick}
+              onEditAvatar={handlePopupAvatarClick}
+              onAddPlace={handlePopupPlaceClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleLike}
+              cards={cards}
+              isLoading={isLoadingLoader}
             />
-
-            <Route path='sign-up'>
-              <Register 
-                name='register'
-              />
-            </Route>
-
-            <Route path='sign-in'>
-              <Login
-                name='login'
-              />
-            </Route>
-
-
 
           </Switch>
 
