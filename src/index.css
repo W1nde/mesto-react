@@ -42,3 +42,10 @@
 @import url(./blocks/error/error.css);
 @import url(./blocks/footer/footer.css);
 @import url(./blocks/footer/__title/footer__title.css);
+
+@import url(./blocks/form/form.css);
+@import url(./blocks/form/__input/form__input.css);
+@import url(./blocks/form/__submit-button/form__submit-button.css);
+@import url(./blocks/auth/__block/auth__block.css);
+@import url(./blocks/auth/__link/auth__link.css);
+@import url(./blocks/auth/__question/auth__question.css);

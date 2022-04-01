@@ -16,6 +16,8 @@ import PopupDelete from './PopupDelete';
 import PopupProfileEdit from './PopupProfileEdit';
 import PopupAvatarEdit from './PopupAvatarEdit';
 
+import InfoToolTip from './InfoToolTip'
+
 import api from '../utils/api';
 import * as auth from '../utils/auth.js';
 
@@ -36,9 +38,17 @@ function App() {
 
   const [load, setLoad] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const [isInfoToolTipPopupOpen, setIsInfoToolTipPopupOpen] = React.useState(false);
+
   const [isLoadingLoader, setIsLoadingLoader] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
 
   const [authState, setAuthState] = React.useState(false);
+  
+  const [isPopupInfoToolTipOpen, setIsPopupInfoToolTipOpen] = React.useState(false);
+
+  const history = useHistory()
 
   function handlePopupProfileClick() {
     setIsPopupProfileOpen(true);
@@ -62,6 +72,7 @@ function App() {
     setIsPopupPlaceOpen(false);
     setIsPopupAvatarOpen(false);
     setIsPopupDeleteOpen(false);
+    setIsInfoToolTipPopupOpen(false);
 
     setSelectedCard(null);
   }
@@ -129,7 +140,7 @@ function App() {
       .then(() => {
         setLoad(false);
         setLoggedIn(false);
-        useHistory.push('/sign-in');
+        history.push('/sign-in');
       })
       .catch((err) => {
         console.log(err);
@@ -155,6 +166,69 @@ function App() {
       .catch((err) => `Данные пользователя не получены : ${err}`);
   }, []);
 
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  function tokenCheck() {
+    setLoad(true);
+    auth.getContent()
+      .then((res) => {
+        if (res) {
+          setUserData({
+            id: res._id,
+            email: res.email
+          });
+          setLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch(err => {
+        setLoad(false);
+        console.log(err);
+        history.push('/sign-in');
+      });
+  }
+
+  function handleRegisterPopup(state) {
+    setIsSuccess(state);
+    setIsPopupInfoToolTipOpen(true);
+  }
+
+  function handleRegister({ email, password }) {
+    setIsLoading(true);
+    return auth.register(email, password)
+      .then(() => {
+        handleRegisterPopup(true);
+        history.push('/sign-in');
+      })
+      .catch((err) => {
+        handleRegisterPopup(false);
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
+  }
+
+  function handleAuthState(state) {
+    setAuthState(state);
+  }
+
+  function handleLogin({ email, password }) {
+    setIsLoading(true);
+    return auth.authorize(email, password)
+      .then(() => {
+        tokenCheck();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className='page'>
@@ -168,6 +242,7 @@ function App() {
           />
 
           <Switch>
+
             <ProtectedRoute
               exact patch='/'
               loggedIn={loggedIn}
@@ -180,6 +255,28 @@ function App() {
               cards={cards}
               isLoading={isLoadingLoader}
             />
+
+            <Route path='/sign-up'>
+              <Register
+                name='register'
+                onRegister={handleRegister}
+                isLoading={isLoading}
+                onAuthState={handleAuthState}
+              />
+            </Route>
+
+            <Route path='/sign-in'>
+              <Login
+                name='login'
+                onLogin={handleLogin}
+                isLoading={isLoading}
+                onAuthState={handleAuthState}
+              />
+            </Route>
+
+            <Route>
+              {loggedIn ? <Redirect to="/"/> : <Redirect to="/sign-in"/>}
+            </Route>
 
           </Switch>
 
@@ -225,6 +322,12 @@ function App() {
           isOpen={isPopupDeleteOpen}
           onClose={closePopups}
           onCardDelete={() => handleCardDelete(cardToDelete)}
+        />
+
+        <InfoToolTip
+          isOpen={isInfoToolTipPopupOpen}
+          onClose={closePopups}
+          isSuccess={isSuccess}
         />
 
         <ImagePopup card={selectedCard} onClose={closePopups} />

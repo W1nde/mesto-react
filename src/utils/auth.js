@@ -1,7 +1,8 @@
-export const BASE_URL = 'https://api.apro.students.nomoreparties.xyz';
+export const url = 'https://mesto.nomoreparties.co';
 
 export const register = (email, password) => {
-  return fetch(`${BASE_URL}/signup`, {
+
+  return fetch(`${url}/signup`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -22,13 +23,13 @@ export const register = (email, password) => {
 };
 
 export const authorize = (email, password) => {
-  return fetch(`${BASE_URL}/signin`, {
+
+  return fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    credentials: 'include',
     body: JSON.stringify({ email, password })
   })
     .then(res => {
@@ -46,13 +47,13 @@ export const authorize = (email, password) => {
 };
 
 export const getContent = () => {
-  return fetch(`${BASE_URL}/users/me`, {
+
+  return fetch(`${url}/users/me`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    },
-    credentials: 'include',
+    }
   })
     .then((res) => {
       if (res.status === 200) {
@@ -69,9 +70,9 @@ export const getContent = () => {
 };
 
 export const signOut = () => {
-  return fetch(`${BASE_URL}/signout`, {
+
+  return fetch(`${url}/signout`, {
     method: 'POST',
-    credentials: 'include',
   })
     .then((res) => {
       if (res.status === 200) {
