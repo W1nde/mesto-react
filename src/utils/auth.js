@@ -1,4 +1,4 @@
-export const url = 'https://mesto.nomoreparties.co/v1/cohort-35/';
+export const url = 'https://auth.nomoreparties.co';
 
 export const register = (email, password) => {
 
