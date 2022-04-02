@@ -1,4 +1,4 @@
-export const url = 'https://mesto.nomoreparties.co';
+export const url = 'https://mesto.nomoreparties.co/v1/cohort-35/';
 
 export const register = (email, password) => {
 
@@ -14,7 +14,7 @@ export const register = (email, password) => {
       if (res.status === 400) {
         throw new Error('Некорректное заполнение поля или полей');
       } else if (res.status === 409) {
-        throw new Error('E-mail уже испольтзуется');
+        throw new Error('E-mail уже используется');
       } else if (res.status === 200) {
         return res.json();
       }
