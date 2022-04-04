@@ -159,13 +159,11 @@ function App() {
       })
   }
 
-
   function handleLogout() {
     localStorage.removeItem('jwt');
     setLoggedIn(false);
     history.push('/sign-in');
   }
-
 
   React.useEffect(() => {
     if (loggedIn) {
@@ -232,12 +230,6 @@ function App() {
 
           </Switch>
 
-
-
-
-
-
-
           <Main
             onEditProfile={handlePopupProfileClick}
             onEditAvatar={handlePopupAvatarClick}
@@ -250,6 +242,7 @@ function App() {
           />
 
           <Footer />
+          
         </div>
 
         <PopupAddPlace
