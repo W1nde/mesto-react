@@ -1,87 +1,64 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import { useFormValidation } from '../utils/formValidation';
+import React, { useState } from 'react';
 
-function Login({ onLogin, name, isLoading, onAuthState }) {
-  const { values, handleChange, errors, isValid, resetForm } = useFormValidation();
+function Login(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  React.useEffect(() => {
-    onAuthState(false);
-  }, []);
 
-  React.useEffect(() => {
-    resetForm();
-  }, [resetForm]);
+  function handleSubmit(e) {
+    e.preventDefault()
+    props.onSubmit({ email, password })
+  }
 
-  function handleLoginSubmit(e) {
-    e.preventDefault();
-    if (!values.email || !values.password) {
-      return;
-    }
-    onLogin(values);
+  function handleEmail(e) {
+    setEmail(e.target.value)
+  }
+
+  function handlePassword(e) {
+    setPassword(e.target.value)
   }
 
   return (
 
-    <main className='page'>
-      <section className='login'>
-        <h2 className='login__title'>Вход</h2>
+    <div className='auth'>
+      <h2 className='auth__title'>Вход</h2>
 
-        <form
-            className='form'
-            id={`${name}Form`}
-            data-form={name}
-            method='POST'
-            action='#'
-            noValidate 
+      <form
+        className='auth__form'
+        onSubmit={handleSubmit}
+      >
 
-            onSubmit={handleLoginSubmit}
-        >
+        <input 
+          className='auth__input'
+          name='email'
+          type='email'
+          minLength='2'
+          maxLength='40'
+          placeholder='E-mail'
+          required
 
-            <input 
-                className='form__input'
-                name='email'
-                type='email'
-                id='email-input'
-                minLength='2'
-                maxLength='40'
-                placeholder='E-mail'
-                required
+          value={email}
+          onChange={handleEmail}
+        />
 
-                value={values.email || ''}
-                onChange={handleChange}
-            />
+        <input
+          className='auth__input'
+          name='password'
+          type='password'
+          minLength='2'
+          maxLength='40'
+          placeholder='Пароль'
+          required
 
-            <input
-                className='form__input'
-                name='password'
-                type='password'
-                id='password-input'
-                minLength='2'
-                maxLength='40'
-                placeholder='Пароль'
-                required
+          value={password}
+          onChange={handlePassword}
+        />
 
-                value={values.password || ''}
-                onChange={handleChange}
-            />
+        <button className='auth__submit-button' type='submit'>Войти</button>
 
-            <button
-                className='form__submit-button'
-                name='submit'
-                type='submit'
-                value={`${isLoading ? 'Вход' : 'Войти'}`}
-                disabled={!isValid || isLoading}
-            />
+      </form>
 
-        </form>
-
-        <div className='auth__block'>
-          <p className='auth__question'>Ещё не зарегистрированы?</p>
-          <Link to='/sign-up' className='auth__link'>Регистрация</Link>
-        </div>
-      </section>
-    </main>
+    </div>
 
   );
 }

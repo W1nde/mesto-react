@@ -16,10 +16,13 @@ import PopupDelete from './PopupDelete';
 import PopupProfileEdit from './PopupProfileEdit';
 import PopupAvatarEdit from './PopupAvatarEdit';
 
-import InfoToolTip from './InfoToolTip'
+import InfoTooltip from './InfoTooltip'
 
 import api from '../utils/api';
-import * as auth from '../utils/auth.js';
+import auth from '../utils/auth.js';
+
+import authSuccess from '../images/authSuccess.svg'
+import authFailure from '../images/authFailure.svg'
 
 function App() {
   const [cards, setCards] = useState([]);
@@ -27,27 +30,16 @@ function App() {
   const [isPopupAddOpen, setIsPopupPlaceOpen] = useState(false);
   const [isPopupAvatarOpen, setIsPopupAvatarOpen] = useState(false);
   const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
+  const [isTooltipPopupOpen, setIsTooltipPopupOpen] = React.useState(false);
 
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardToDelete, setCardToDelete] = useState('');
   const [currentUser, setCurrentUser] = useState({});
 
-  const [loggedIn, setLoggedIn] = React.useState(false)
-
-  const [userData, setUserData] = React.useState(null);
-
-  const [load, setLoad] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const [isInfoToolTipPopupOpen, setIsInfoToolTipPopupOpen] = React.useState(false);
-
-  const [isLoadingLoader, setIsLoadingLoader] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
-
-  const [authState, setAuthState] = React.useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState('');
+  const [messageTooltip, setMessageTooltip] = React.useState({})
   
-  const [isPopupInfoToolTipOpen, setIsPopupInfoToolTipOpen] = React.useState(false);
-
   const history = useHistory()
 
   function handlePopupProfileClick() {
@@ -72,7 +64,7 @@ function App() {
     setIsPopupPlaceOpen(false);
     setIsPopupAvatarOpen(false);
     setIsPopupDeleteOpen(false);
-    setIsInfoToolTipPopupOpen(false);
+    setIsTooltipPopupOpen(false);
 
     setSelectedCard(null);
   }
@@ -135,116 +127,87 @@ function App() {
       .catch((err) => `Не удалось создать карточку, ошибка: ${err}`);
   }
 
-  function handleSignOut() {
-    return auth.signOut()
-      .then(() => {
-        setLoad(false);
-        setLoggedIn(false);
-        history.push('/sign-in');
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
-
-
-
-
-
-
-
-
-
-
-  React.useEffect(() => {
-    api.getInitialData()
-
-    .then(([userData, cardsList]) => {
-      setCurrentUser(userData);
-      setCards(cardsList);
-      })
-      .catch((err) => `Данные пользователя не получены : ${err}`);
-  }, []);
-
-  React.useEffect(() => {
-    tokenCheck();
-  }, []);
-
-  function tokenCheck() {
-    setLoad(true);
-    auth.getContent()
+  function handleSubmitRegistration(data) {
+    auth.registration(data)
       .then((res) => {
-        if (res) {
-          setUserData({
-            id: res._id,
-            email: res.email
-          });
-          setLoggedIn(true);
-          history.push('/');
-        }
-      })
-      .catch(err => {
-        setLoad(false);
-        console.log(err);
-        history.push('/sign-in');
-      });
-  }
-
-  function handleRegisterPopup(state) {
-    setIsSuccess(state);
-    setIsPopupInfoToolTipOpen(true);
-  }
-
-  function handleRegister({ email, password }) {
-    setIsLoading(true);
-    return auth.register(email, password)
-      .then(() => {
-        handleRegisterPopup(true);
-        history.push('/sign-in');
-      })
-      .catch((err) => {
-        handleRegisterPopup(false);
-        console.log(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
-  }
-
-  function handleAuthState(state) {
-    setAuthState(state);
-  }
-
-  function handleLogin({ email, password }) {
-    setIsLoading(true);
-    return auth.authorize(email, password)
-      .then(() => {
-        tokenCheck();
+        if(res) {
+          history.push('/sign-in')
+          setIsTooltipPopupOpen(true)
+          setMessageTooltip({ message: "Вы успешно зарегистрировались!", img: authSuccess})
+        }        
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
+        setIsTooltipPopupOpen(true)
+        setMessageTooltip({ message: "Что-то пошло не так! Попробуйте еще раз.", img: authFailure })
+
       })
   }
+
+  function handleSubmitAuthorization(data) {
+    auth.authorization(data)
+      .then((res) => {
+        localStorage.setItem('jwt', res.token);
+        setLoggedIn(true);
+        setEmail(res.email);
+        history.push('/')
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsTooltipPopupOpen(true)
+        setMessageTooltip({ message: "Что-то пошло не так! Попробуйте еще раз.", img: authFailure })
+      })
+  }
+
+
+  function handleLogout() {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+    history.push('/sign-in');
+  }
+
+
+  React.useEffect(() => {
+    if (loggedIn) {
+      api.getInitialData()
+        .then(([userData, cardsList]) => {
+          setCurrentUser(userData);
+          setCards(cardsList);
+       })
+      .catch(err => console.log(err));
+    }
+  }, [loggedIn]);
+
+  React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if(jwt) {
+      auth.getUser(jwt)
+        .then((res) => {
+          if(res) {
+            setEmail(res.data.email);
+            setLoggedIn(true);
+            history.push('/');
+          } else {
+            localStorage.removeItem(jwt);
+          }
+        })
+        .catch(err => console.log(err))
+    }
+  }, [history])
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className='page'>
         <div className='page__container'>
           <Header
-            loggedIn={loggedIn}
-            userData={userData}
-            onSignOut={handleSignOut}
-            authState={authState}
-            load={load}
+            onLogout={handleLogout}
+            email={email}
           />
 
           <Switch>
 
             <ProtectedRoute
-              exact patch='/'
+              exact path='/'
               loggedIn={loggedIn}
               component={Main}
               onEditProfile={handlePopupProfileClick}
@@ -253,25 +216,14 @@ function App() {
               onCardClick={handleCardClick}
               onCardLike={handleLike}
               cards={cards}
-              isLoading={isLoadingLoader}
             />
 
             <Route path='/sign-up'>
-              <Register
-                name='register'
-                onRegister={handleRegister}
-                isLoading={isLoading}
-                onAuthState={handleAuthState}
-              />
+              <Register onSubmit={handleSubmitRegistration}/>
             </Route>
 
             <Route path='/sign-in'>
-              <Login
-                name='login'
-                onLogin={handleLogin}
-                isLoading={isLoading}
-                onAuthState={handleAuthState}
-              />
+              <Login onSubmit={handleSubmitAuthorization}/>
             </Route>
 
             <Route>
@@ -324,13 +276,14 @@ function App() {
           onCardDelete={() => handleCardDelete(cardToDelete)}
         />
 
-        <InfoToolTip
-          isOpen={isInfoToolTipPopupOpen}
+        <InfoTooltip
+          isOpen={isTooltipPopupOpen}
           onClose={closePopups}
-          isSuccess={isSuccess}
+          messageTooltip={messageTooltip}
         />
 
         <ImagePopup card={selectedCard} onClose={closePopups} />
+
       </div>
     </CurrentUserContext.Provider>
   );

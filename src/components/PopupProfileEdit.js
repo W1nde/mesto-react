@@ -42,13 +42,13 @@ function PopupProfileEdit(props) {
       >
 
       <input
+        className="popup__input popup__input_type_name"
         id="user-name"
         type="text"
         name="name"
         value={name || ''}
         placeholder="Имя"
         size="40"
-        className="popup__input popup__input_type_name"
         minLength="2"
         maxLength="40"
         onChange={handleNameChange}
@@ -58,13 +58,13 @@ function PopupProfileEdit(props) {
       <span id="name-input-error" className="popup__span error"></span>
 
       <input
+        className="popup__input popup__input_type_job"
         id="job-input"
         type="text"
         name="job"
         value={about|| ''}
         placeholder="О себе"
         size="40"
-        className="popup__input popup__input_type_job"
         minLength="2"
         maxLength="200"
         onChange={handleAboutChange}

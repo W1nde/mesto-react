@@ -1,19 +1,32 @@
-import React from 'react';
-import success from '../images/info-success.svg';
-import failure from '../images/info-failure.svg';
-
-function InfoToolTip({ onClose, isOpen, isSuccess }) {
-
+function InfoToolTip(props) {
+  const { messageTooltip } = props;
   return (
-    <div className={`${isOpen ? 'popup_opened' : ''}`}>
-      <div className='popup__content'>
+    
+    <div
+      className={
+        props.isOpen
+          ? `popup popup_type_${props.name} popup_type_opened`
+          : `popup popup_type_${props.name}`
+      }
+    >
+      <div className="popup__overlay" onClick={props.onClose}></div>
+      <div className="popup__content">
 
-        <button type='button' className='popup__close' onClick={onClose}/>
-        <img src={isSuccess ? success : failure}
-             alt={isSuccess ? 'Регистрация прошла успешно' : 'Ошибка, Вы не зарегистрированы'}
-             className='popup__pic'/>
-        <h2 className='popup__title'>
-          {isSuccess ? 'Регистрация прошла успешно!' : 'Что-то пошло не так! Повторите попытку'}
+        <img
+          className="auth__pic"
+          src={messageTooltip.img}
+          alt={messageTooltip.message}
+        ></img>
+
+        <button
+          className="popup__close"
+          onClick={props.onClose}
+          type="button"
+        ></button>
+
+        <h2 
+          className="popup__title">
+          {messageTooltip.message}
         </h2>
 
       </div>

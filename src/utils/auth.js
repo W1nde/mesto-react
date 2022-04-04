@@ -1,83 +1,50 @@
-export const url = 'https://auth.nomoreparties.co';
-
-export const register = (email, password) => {
-
-  return fetch(`${url}/signup`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  })
-    .then((res) => {
-      if (res.status === 400) {
-        throw new Error('Некорректное заполнение поля или полей');
-      } else if (res.status === 409) {
-        throw new Error('E-mail уже используется');
-      } else if (res.status === 200) {
-        return res.json();
+class Auth {
+  constructor(address) {
+      this._address = address;
+  }
+  _handleResponse = (response) => {
+      if (response.ok) {
+          return response.json();
       }
-      throw new Error('Ошибка сервера');
-    })
-};
+      return Promise.reject(`Ошибка ${response.status}`);
+  }
 
-export const authorize = (email, password) => {
+  registration({email, password}) {
+      return fetch(`${this._address}/signup`, {
+          method: 'POST',
+          headers: {
+              "Content-Type": 'application/json',
+          },
+          body: JSON.stringify({
+              email, 
+              password})
+      })
+      .then(this._handleResponse);
+  }
+  authorization({email, password}) {
+      return fetch(`${this._address}/signin`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              email,
+              password
+          })
+      })
+      .then(this._handleResponse);
+  }
+  getUser(jwt) {
+      return fetch(`${this._address}/users/me`, {
+          method: 'GET',
+          headers: {
+              authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/json'
+          },
+      })
+      .then(this._handleResponse);
+  }
+}
+const auth = new Auth('https://auth.nomoreparties.co');
 
-  return fetch(`${url}/signin`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  })
-    .then(res => {
-      if (res.status === 200) {
-        return;
-      }
-      if (res.status === 400) {
-        throw new Error('Ошибка в передаче поля или полей');
-      }
-      if (res.status === 401) {
-        throw new Error('Указанный e-mail незарегестрирован');
-      }
-      throw new Error(`Ошибка авторизации: ${res.status}`);
-    })
-};
-
-export const getContent = () => {
-
-  return fetch(`${url}/users/me`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        return res.json();
-      }
-      if (res.status === 401) {
-        throw new Error('Ошибка в передаче токена');
-      }
-      if (res.status === 400) {
-        throw new Error('Некорректное заполнение токена');
-      }
-      throw new Error(`Ошибка токена: ${res.status}`);
-    })
-};
-
-export const signOut = () => {
-
-  return fetch(`${url}/signout`, {
-    method: 'POST',
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        return;
-      }
-      throw new Error(`Ошибка: ${res.status}`);
-    })
-};
+export default auth;
