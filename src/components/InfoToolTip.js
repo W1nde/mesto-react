@@ -5,8 +5,8 @@ function InfoTooltip(props) {
     <div
       className={
         props.isOpen
-          ? `popup popup_type_pic popup_type_opened`
-          : `popup popup_type_pic`
+          ? `popup popup__auth-pic popup_opened`
+          : `popup popup__auth-pic`
       }
     >
       <div className='popup__overlay' onClick={props.onClose}></div>
@@ -25,7 +25,12 @@ function InfoTooltip(props) {
         ></button>
 
         <h2 
-          className='popup__title'>
+          className='popup__title'
+          style={{
+            margin: 36,
+            textAlign: 'center'
+          }}
+        >
           {messageTooltip.message}
         </h2>
 

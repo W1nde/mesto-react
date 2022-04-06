@@ -149,7 +149,7 @@ function App() {
       .then((res) => {
         localStorage.setItem('jwt', res.token);
         setLoggedIn(true);
-        setEmail(res.email);
+        setEmail(data.email);
         history.push('/')
       })
       .catch((err) => {
@@ -213,6 +213,8 @@ function App() {
               onAddPlace={handlePopupPlaceClick}
               onCardClick={handleCardClick}
               onCardLike={handleLike}
+              onСardDelete={handleCardDelete}
+              onConfirmCardDelete={handlePopupDeleteClick}
               cards={cards}
             />
 
@@ -229,17 +231,6 @@ function App() {
             </Route>
 
           </Switch>
-
-          <Main
-            onEditProfile={handlePopupProfileClick}
-            onEditAvatar={handlePopupAvatarClick}
-            onAddPlace={handlePopupPlaceClick}
-            onCardLike={handleLike}
-            onCardClick={handleCardClick}
-            onСardDelete={handleCardDelete}
-            onConfirmCardDelete={handlePopupDeleteClick}
-            cards={cards}
-          />
 
           <Footer />
           
